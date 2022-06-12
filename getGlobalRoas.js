@@ -4,12 +4,12 @@ import fs from 'fs'
 
 // 生成时间序列
 function getTime(year, months) {
-  let nums = [];
+  let times = [];
   for (let month of months) {
     let date = `${year}/${month}/01/`;
-    nums.push(date)
+    times.push(date)
   }
-  return nums;
+  return times;
 }
 
 // 生成链接序列
@@ -25,7 +25,7 @@ function getUrls(dataSets, months, year) {
 
 
 // 输出各个月份的数据
-async function getAsyncValue(url, year) {
+async function getSingleMonth(url, year) {
 
   // 问题1：获取链接失败
   // 问题2：并发执行顺序乱码
@@ -37,8 +37,7 @@ async function getAsyncValue(url, year) {
   try {
     for await (const line of iterator) {
       num++;
-      // 监控执行过程
-      // if (num % 10000 === 0) {
+      // if (num % 10000 === 0) {// 监控执行过程
       //   console.log(line)
       // }
     }
@@ -48,9 +47,9 @@ async function getAsyncValue(url, year) {
     }
   }
   return {
-    num,
     dataset,
-    month
+    month,
+    num
   };
 }
 
@@ -63,23 +62,22 @@ async function main(dataSets, months, year) {
     let totalLength = dataSets.length * months.length;
     return new Promise((resolve, reject) => {
       urls.forEach(async (url) => {
-        let monthObj = await getAsyncValue(url, year)
-        console.log(monthObj)
-        totalMonth.push(monthObj)
+        let singleMonth = await getSingleMonth(url, year)
+        console.log(singleMonth)
+        totalMonth.push(singleMonth)
         // 所有数据接收完毕后，resolve返回
         if (totalMonth.length === totalLength) resolve(totalMonth)
       })
     })
   }
+
   // ! 返回Promise对象的原因是为了保证异步顺序正确
-  // ! 不然将会出现非常多奇奇怪怪的现象
   let totalMonth = await getTotalMonth()
-  // ! 调整并发顺序
+  // ! 修复并发造成的顺序混乱
   totalMonth.sort((a, b) => a.month - b.month)
 
   console.log('totalMonth: ' + totalMonth)
   fs.writeFileSync('./totalMonth.json', JSON.stringify(totalMonth))
-
 
   function getNums() {
     // 先n^2解决吧！
@@ -89,7 +87,7 @@ async function main(dataSets, months, year) {
         name: dataSet,
         data: []
       });
-      // ! 调整并发顺序
+      // ! 修复并发造成的顺序混乱
       totalMonth.forEach(singleMonth => {
         if (singleMonth.dataset === dataSet) {
           nums[index].data.push(singleMonth.num)
@@ -99,8 +97,6 @@ async function main(dataSets, months, year) {
     return nums;
   }
 
-
-
   function writeToJson() {
     let time = getTime(year, months)
     let nums = getNums();
@@ -108,6 +104,7 @@ async function main(dataSets, months, year) {
     let obj = { time, nums }
     fs.writeFileSync(`${year}-global.json`, JSON.stringify(obj))
   }
+
   writeToJson()
 }
 
