@@ -1,0 +1,22 @@
+[
+  {
+    "name": "afrinic",
+    "href": "afrinic.tal/"
+  },
+  {
+    "name": "apnic",
+    "href": "apnic.tal/"
+  },
+  {
+    "name": "arin",
+    "href": "arin.tal/"
+  },
+  {
+    "name": "lacnic",
+    "href": "lacnic.tal/"
+  },
+  {
+    "name": "ripencc",
+    "href": "ripencc.tal/"
+  }
+]
