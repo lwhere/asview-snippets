@@ -58,9 +58,7 @@ function getJsonFromPage(url) {
 let url = 'https://ftp.ripe.net/rpki/lacnic.tal/2022/05/01/'
 getJsonFromPage(url)
 
-// 思路1：
-// 1. 直接遍历下载url的csv文件，然后读取行数
-// 2. 变量：1.lacnic.tal 2: 从 01 -> 05
+
 
 
 
