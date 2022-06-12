@@ -1,7 +1,12 @@
-import fetchline from 'fetchline'
-// 这个fetchline的库有点意思，核心源码是fetchline.ts，看看别人是怎么实现并发的吧！
-import fs from 'fs'
+/**
+ * @author: lwhere 
+ * @input dataSets, months, year
+ * @output year-global.json, totalMonth.json
+ */
 
+ import fetchline from 'fetchline'
+ // 这个fetchline的库有点意思，核心源码是fetchline.ts，看看别人是怎么实现并发的吧！
+ import fs from 'fs'
 // 生成时间序列
 function getTime(year, months) {
   let times = [];
